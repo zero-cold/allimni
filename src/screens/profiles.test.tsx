@@ -1,4 +1,5 @@
 import { render, screen, fireEvent } from '@testing-library/react';
+import { vi } from 'vitest';
 import { clear } from 'idb-keyval';
 import App from '../App';
 import { saveState, resetMemory, loadState } from '../storage/storage';
@@ -69,4 +70,22 @@ test('child picks profile without password', async () => {
   render(<App />);
   fireEvent.click(await screen.findByTestId('profile-card-0'));
   expect(await screen.findByTestId('map')).toBeTruthy();
+});
+
+test('gate accepts Arabic-Indic digits', async () => {
+  render(<App />);
+  const q = await screen.findByTestId('gate-question');
+  const [a, b] = q.textContent!.match(/\d+/g)!.map(Number);
+  const ar = String(a * b).replace(/\d/g, (d) => '٠١٢٣٤٥٦٧٨٩'[Number(d)]);
+  fireEvent.change(screen.getByTestId('gate-answer'), { target: { value: ar } });
+  fireEvent.click(screen.getByTestId('gate-submit'));
+  expect(await screen.findByTestId('profile-name')).toBeTruthy();
+});
+test('error boundary offers recovery instead of a blank screen', async () => {
+  const { ErrorBoundary } = await import('../app/ErrorBoundary');
+  const Boom = () => { throw new Error('x'); };
+  const spy = vi.spyOn(console, 'error').mockImplementation(() => {});
+  render(<ErrorBoundary><Boom /></ErrorBoundary>);
+  expect(screen.getByTestId('error-reload')).toBeTruthy();
+  spy.mockRestore();
 });

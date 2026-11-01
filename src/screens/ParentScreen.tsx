@@ -5,8 +5,9 @@ import { getItem, getStages } from '../content/stages';
 import type { IslandId } from '../content/types';
 import { createFeedback } from '../feedback/feedback';
 import { defaultSettings, type HearingMode, type Profile, type Settings } from '../settings/settings';
+import { MAX_PROFILES } from '../settings/settings';
 import { ParentGate } from './ParentGate';
-import { prefersReducedMotion } from './ProfileForm';
+import { ProfileForm, prefersReducedMotion } from './ProfileForm';
 
 const ISLANDS: [IslandId, string][] = [
   ['ar', 'الحروف العربية'], ['en', 'الحروف الإنجليزية'], ['num', 'الأرقام'], ['color', 'الألوان'],
@@ -23,12 +24,23 @@ function Toggle({ id, label, on, onClick }: { id: string; label: string; on: boo
 function ChildPanel({ profile }: { profile: Profile }) {
   const { updateProfile, removeProfile } = useApp();
   const [confirming, setConfirming] = useState(false);
+  const [editing, setEditing] = useState(false);
   const { id, settings, progress, mode } = profile;
   const set = (patch: Partial<Settings>) =>
     updateProfile(id, (p) => ({ ...p, settings: { ...p.settings, ...patch } }));
   const setMode = (m: HearingMode) =>
     updateProfile(id, (p) => ({ ...p, mode: m, settings: defaultSettings(m, prefersReducedMotion()) }));
   const practice = Object.keys(progress.practice).map(getItem);
+
+  if (editing) {
+    return (
+      <ProfileForm
+        initial={profile}
+        onCancel={() => setEditing(false)}
+        onSave={(next) => { updateProfile(id, (p) => ({ ...p, name: next.name, avatar: next.avatar })); setEditing(false); }}
+      />
+    );
+  }
 
   return (
     <section className="child-panel">
@@ -67,14 +79,18 @@ function ChildPanel({ profile }: { profile: Profile }) {
           </div>
         </div>
       ) : (
-        <button type="button" className="delete-link" data-testid={`delete-${id}`} onClick={() => setConfirming(true)}>حذف الملف</button>
+        <div className="row">
+          <button type="button" data-testid={`edit-${id}`} onClick={() => setEditing(true)}>تعديل الاسم والصورة</button>
+          <button type="button" className="delete-link" data-testid={`delete-${id}`} onClick={() => setConfirming(true)}>حذف الملف</button>
+        </div>
       )}
     </section>
   );
 }
 
 export function ParentScreen() {
-  const { state, active, saveFailed, navigate } = useApp();
+  const { state, active, saveFailed, loadFailed, addProfile, navigate } = useApp();
+  const [adding, setAdding] = useState(false);
   const [passed, setPassed] = useState(false);
   const [, refresh] = useState(0);
   const voices = useMemo(() => createFeedback(defaultSettings('partial', false)), []);
@@ -97,7 +113,13 @@ export function ParentScreen() {
       {saveFailed && (
         <p className="notice" data-testid="save-warning">تعذر حفظ التقدم على هذا الجهاز. يستمر اللعب، لكن التقدم قد يضيع عند إغلاق التطبيق. تأكد من أن المتصفح ليس في التصفح الخاص.</p>
       )}
+      {loadFailed && (
+        <p className="notice" data-testid="load-warning">تعذرت قراءة البيانات المحفوظة على هذا الجهاز، وقد لا يظهر التقدم السابق.</p>
+      )}
       {state.profiles.map((p) => <ChildPanel key={p.id} profile={p} />)}
+      {adding
+        ? <ProfileForm onCancel={() => setAdding(false)} onSave={(p) => { addProfile(p); setAdding(false); }} />
+        : state.profiles.length < MAX_PROFILES && <button type="button" data-testid="parent-add" onClick={() => setAdding(true)}>إضافة طفل</button>}
       <p className="data-note" data-testid="data-note">كل البيانات محفوظة على هذا الجهاز فقط ولا تُرسل إلى أي مكان. إذا مُسحت بيانات المتصفح يضيع التقدم.</p>
     </main>
   );

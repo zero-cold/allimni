@@ -17,6 +17,11 @@ export const MIX_RECIPES = [
   { a: 'red', b: 'white', result: 'pink' },
 ];
 
+// مرحلتا الخلط تغطيان الوصفات الأربع، بحسب أول عنصر في جولة المرحلة.
+export function mixRoundsFor(firstItemId: string) {
+  return firstItemId === 'pink' ? MIX_RECIPES.slice(2, 4) : MIX_RECIPES.slice(0, 2);
+}
+
 export function getItems(island: IslandId): Item[] {
   return ITEMS.filter((i) => i.island === island);
 }

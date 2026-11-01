@@ -6,12 +6,16 @@ import { ParentGate } from './ParentGate';
 import { ProfileForm } from './ProfileForm';
 
 export function ProfilesScreen() {
-  const { state, selectProfile, addProfile, navigate } = useApp();
+  const { state, loadFailed, selectProfile, addProfile, navigate } = useApp();
   const empty = state.profiles.length === 0;
   const [view, setView] = useState<'list' | 'gate' | 'form'>(empty ? 'gate' : 'list');
 
+  const warning = loadFailed && (
+    <p className="notice" data-testid="load-warning">تعذرت قراءة البيانات المحفوظة على هذا الجهاز، وقد لا يظهر التقدم السابق.</p>
+  );
+
   if (view === 'gate') {
-    return <ParentGate onPass={() => setView('form')} onCancel={empty ? undefined : () => setView('list')} />;
+    return <>{warning}<ParentGate onPass={() => setView('form')} onCancel={empty ? undefined : () => setView('list')} /></>;
   }
   if (view === 'form') {
     return (
@@ -24,6 +28,7 @@ export function ProfilesScreen() {
   return (
     <main className="profiles">
       <h1 className="logo">علمني</h1>
+      {warning}
       <div className="profile-grid">
         {state.profiles.map((p, i) => (
           <button key={p.id} type="button" className="profile-card" data-testid={`profile-card-${i}`} onClick={() => selectProfile(p.id)}>

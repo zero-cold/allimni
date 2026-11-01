@@ -2,7 +2,7 @@ import { createContext, useContext, useEffect, useMemo, useRef, useState, type R
 import type { IslandId } from '../content/types';
 import { createFeedback, type Feedback } from '../feedback/feedback';
 import { addProfile as addToState, type AppState, type Profile } from '../settings/settings';
-import { loadState, requestPersistence, saveState } from '../storage/storage';
+import { lastLoadFailed, loadState, requestPersistence, saveState } from '../storage/storage';
 
 export type Screen =
   | { name: 'profiles' }
@@ -16,6 +16,7 @@ interface AppApi {
   active: Profile | null;
   feedback: Feedback | null;
   saveFailed: boolean;
+  loadFailed: boolean;
   screen: Screen;
   selectProfile(id: string | null): void;
   updateProfile(id: string, fn: (p: Profile) => Profile): void;
@@ -37,10 +38,11 @@ export function StoreProvider({ children }: { children: ReactNode }) {
   const [activeId, setActiveId] = useState<string | null>(null);
   const [screen, setScreen] = useState<Screen>({ name: 'profiles' });
   const [saveFailed, setSaveFailed] = useState(false);
+  const [loadFailed, setLoadFailed] = useState(false);
   const current = useRef<AppState | null>(null);
 
   useEffect(() => {
-    void loadState().then((s) => { current.current = s; setState(s); });
+    void loadState().then((s) => { current.current = s; setLoadFailed(lastLoadFailed()); setState(s); });
   }, []);
 
   const commit = (next: AppState) => {
@@ -65,6 +67,7 @@ export function StoreProvider({ children }: { children: ReactNode }) {
     active,
     feedback,
     saveFailed,
+    loadFailed,
     screen,
     navigate: setScreen,
     selectProfile(id) {

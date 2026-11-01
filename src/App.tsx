@@ -3,6 +3,7 @@ import '@fontsource/baloo-bhaijaan-2/arabic-800.css';
 import '@fontsource/baloo-bhaijaan-2/latin-500.css';
 import '@fontsource/baloo-bhaijaan-2/latin-800.css';
 import './styles.css';
+import { ErrorBoundary } from './app/ErrorBoundary';
 import { StoreProvider, useApp } from './app/store';
 import { CompanionScreen } from './screens/CompanionScreen';
 import { MapScreen } from './screens/MapScreen';
@@ -21,8 +22,10 @@ function Router() {
 
 export default function App() {
   return (
-    <StoreProvider>
-      <Router />
-    </StoreProvider>
+    <ErrorBoundary>
+      <StoreProvider>
+        <Router />
+      </StoreProvider>
+    </ErrorBoundary>
   );
 }

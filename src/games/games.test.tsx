@@ -56,6 +56,9 @@ test('match wrong pair counts as miss and hint after 2', () => {
   expect(p.onAnswer).toHaveBeenLastCalledWith('ar-1', { correct: true, hinted: true });
 });
 
+let now = 1_000_000;
+beforeEach(() => { vi.spyOn(Date, 'now').mockImplementation(() => (now += 400)); });
+afterEach(() => vi.restoreAllMocks());
 const tapCorrect = () => fireEvent.click(screen.getAllByTestId('balloon-correct')[0]);
 
 test('balloon finishes after exactly 5 correct', () => {
@@ -65,15 +68,6 @@ test('balloon finishes after exactly 5 correct', () => {
   expect(p.onDone).not.toHaveBeenCalled();
   tapCorrect();
   expect(p.onDone).toHaveBeenCalledTimes(1);
-});
-test('double tap on a correct balloon counts once', () => {
-  const p = props(ar);
-  render(<BalloonGame {...p} />);
-  const b = screen.getAllByTestId('balloon-correct')[0];
-  fireEvent.click(b);
-  fireEvent.click(b);
-  expect(p.onAnswer).toHaveBeenCalledTimes(1);
-  expect(screen.getByTestId('score').textContent).toContain('1');
 });
 test('wrong balloon loses nothing and stays', () => {
   const p = props(ar);

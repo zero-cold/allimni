@@ -1,5 +1,8 @@
 import { useState, type FormEvent } from 'react';
 
+const toAscii = (v: string) =>
+  v.trim().replace(/[٠-٩]/g, (d) => String(d.charCodeAt(0) - 0x660)).replace(/[۰-۹]/g, (d) => String(d.charCodeAt(0) - 0x6f0));
+
 export function makeGateQuestion(rand: () => number = Math.random) {
   const pick = () => 2 + Math.floor(rand() * 8);
   const a = pick();
@@ -14,7 +17,7 @@ export function ParentGate({ onPass, onCancel }: { onPass(): void; onCancel?: ()
 
   const submit = (e: FormEvent) => {
     e.preventDefault();
-    if (Number(value) === q.answer) { onPass(); return; }
+    if (Number(toAscii(value)) === q.answer) { onPass(); return; }
     setWrong(true);
     setValue('');
     setQ(makeGateQuestion());

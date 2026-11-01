@@ -83,7 +83,7 @@ main, form.panel { padding: max(14px, env(safe-area-inset-top)) max(16px, env(sa
 .swatch { display: grid; place-items: center; width: 62px; height: 62px; border-radius: 16px; border: 3px solid var(--line); font-size: 30px; line-height: 1; }
 .tile { display: grid; place-items: center; padding: 6px; }
 .tile.matched { background: #CFF3D6; }
-.tile.hint { animation: glow 1s infinite; }
+.tile.hint { outline: 5px solid var(--plum); outline-offset: 2px; animation: glow 1s infinite; }
 .prompt { display: flex; align-items: center; gap: 14px; background: var(--surface); border: 3px solid var(--line); border-radius: 22px; padding: 8px 18px; flex-wrap: wrap; justify-content: center; }
 .prompt img { width: 64px; height: 64px; }
 .prompt-glyph { font-size: 52px; font-weight: 800; line-height: 1; }
@@ -180,3 +180,7 @@ main, form.panel { padding: max(14px, env(safe-area-inset-top)) max(16px, env(sa
 .learn-glyph .glyph { font-size: inherit; line-height: inherit; }
 .prompt-glyph, .prompt .glyph { line-height: 1.5; }
 .trace-pad .stroke-now { stroke-width: 6; stroke-dasharray: .1 9; }
+
+.balloon.wrong { animation: shake .4s; outline: 5px dashed var(--coral); outline-offset: 2px; }
+.hint-path { stroke: var(--sun); stroke-width: 9; }
+.hint-ring { fill: none; stroke: var(--sun); stroke-width: 4; }

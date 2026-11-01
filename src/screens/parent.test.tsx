@@ -109,3 +109,29 @@ test('explains data stays on this device', async () => {
   await openParent();
   expect(screen.getByTestId('data-note').textContent).toContain('هذا الجهاز');
 });
+
+test('editing keeps progress', async () => {
+  await openParent();
+  fireEvent.click(screen.getByTestId('edit-1'));
+  fireEvent.change(screen.getByTestId('profile-name'), { target: { value: 'ليان' } });
+  fireEvent.click(screen.getByTestId('profile-save'));
+  await waitFor(async () => {
+    const p = (await loadState()).profiles[0];
+    expect(p.name).toBe('ليان');
+    expect(p.progress.stars).toBe(3);
+  });
+  expect(await screen.findByTestId('parent')).toBeTruthy();
+});
+test('adding a child from the dashboard', async () => {
+  await openParent();
+  fireEvent.click(screen.getByTestId('parent-add'));
+  fireEvent.change(screen.getByTestId('profile-name'), { target: { value: 'نور' } });
+  fireEvent.click(screen.getByTestId('profile-save'));
+  await waitFor(async () => expect((await loadState()).profiles).toHaveLength(3));
+});
+test('warns when stored data could not be read', async () => {
+  const { set } = await import('idb-keyval');
+  await set('allimni-state', { version: 9 });
+  render(<App />);
+  expect(await screen.findByTestId('load-warning')).toBeTruthy();
+});

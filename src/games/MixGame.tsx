@@ -1,21 +1,20 @@
 import { useState } from 'react';
-import { getItem, getItems, MIX_RECIPES } from '../content/stages';
+import { getItem, mixRoundsFor } from '../content/stages';
 import { ItemGlyph } from './ItemFace';
 import type { GameProps } from './types';
 
-const ROUNDS = 2;
 const PAINTS = ['red', 'blue', 'yellow', 'white'];
 const HINT_AFTER = 2;
 
 export function MixGame({ items, feedback, reduceMotion, onAnswer, onDone }: GameProps) {
-  const [start] = useState(() => getItems('color').findIndex((c) => c.id === items[0].id));
+  const [rounds] = useState(() => mixRoundsFor(items[0].id));
   const [round, setRound] = useState(0);
   const [picks, setPicks] = useState<string[]>([]);
   const [misses, setMisses] = useState(0);
   const [solved, setSolved] = useState(false);
   const [shake, setShake] = useState(false);
 
-  const recipe = MIX_RECIPES[(start + round) % MIX_RECIPES.length];
+  const recipe = rounds[round];
   const result = getItem(recipe.result);
   const hint = misses >= HINT_AFTER;
 
@@ -38,7 +37,7 @@ export function MixGame({ items, feedback, reduceMotion, onAnswer, onDone }: Gam
   };
 
   const next = () => {
-    if (round + 1 === ROUNDS) { onDone(); return; }
+    if (round + 1 === rounds.length) { onDone(); return; }
     setRound(round + 1);
     setPicks([]);
     setMisses(0);

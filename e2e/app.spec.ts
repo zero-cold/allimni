@@ -19,7 +19,10 @@ async function playColorStage(page: Page) {
     await page.getByTestId(`left-${id}`).click();
     await page.getByTestId(`right-${id}`).click();
   }
-  for (let i = 0; i < 5; i++) await page.getByTestId('balloon-correct').first().click();
+  for (let i = 0; i < 5; i++) {
+    await page.getByTestId('balloon-correct').first().click();
+    await page.waitForTimeout(350);
+  }
   await expect(page.getByTestId('celebration')).toBeVisible();
 }
 
@@ -118,3 +121,33 @@ for (const size of [{ width: 375, height: 812 }, { width: 768, height: 1024 }]) 
     await check();
   });
 }
+
+test('hints stay visible in reduced motion', async ({ page }) => {
+  await createProfile(page);
+  await page.getByTestId('stage-color-0').click();
+  for (let i = 0; i < 3; i++) await page.getByTestId('learn-next').click();
+  for (let i = 0; i < 2; i++) {
+    await page.getByTestId('left-red').click();
+    await page.getByTestId('right-blue').click();
+  }
+  const width = await page.getByTestId('right-red').evaluate((el) => parseFloat(getComputedStyle(el).outlineWidth));
+  expect(width).toBeGreaterThanOrEqual(4);
+});
+
+test.describe('with motion on', () => {
+  test.use({ contextOptions: { reducedMotion: 'no-preference' } });
+  test('a stage can be completed with animations running', async ({ page }) => {
+    await createProfile(page);
+    await page.getByTestId('stage-color-0').click({ force: true });
+    for (let i = 0; i < 3; i++) await page.getByTestId('learn-next').click();
+    for (const id of ['red', 'blue', 'yellow']) {
+      await page.getByTestId(`left-${id}`).click();
+      await page.getByTestId(`right-${id}`).click();
+    }
+    for (let i = 0; i < 5; i++) {
+      await page.getByTestId('balloon-correct').first().click({ force: true });
+      await page.waitForTimeout(350);
+    }
+    await expect(page.getByTestId('celebration')).toBeVisible();
+  });
+});

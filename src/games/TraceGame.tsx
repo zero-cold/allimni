@@ -22,7 +22,8 @@ export function TraceGame({ items, feedback, reduceMotion, onAnswer, onDone }: G
   const [drawn, setDrawn] = useState<{ x: number; y: number }[]>([]);
   const [shake, setShake] = useState(false);
   const svg = useRef<SVGSVGElement>(null);
-  const drawing = useRef(false);
+  const activePointer = useRef<number | null>(null);
+  const path = useRef<{ x: number; y: number }[]>([]);
 
   const step = steps[stepIndex];
   const stroke = step.strokes[strokeIndex];
@@ -70,13 +71,28 @@ export function TraceGame({ items, feedback, reduceMotion, onAnswer, onDone }: G
         viewBox="0 0 100 100"
         onAnimationEnd={() => setShake(false)}
         onPointerDown={(e) => {
+          // إصبع واحد فقط، فلا تفسد راحة اليد المسار.
+          if (activePointer.current !== null) return;
           e.currentTarget.setPointerCapture?.(e.pointerId);
-          drawing.current = true;
-          setDrawn([toGrid(e)]);
+          activePointer.current = e.pointerId;
+          path.current = [toGrid(e)];
+          setDrawn(path.current);
         }}
-        onPointerMove={(e) => { if (drawing.current) setDrawn((d) => [...d, toGrid(e)]); }}
-        onPointerUp={() => { if (drawing.current) { drawing.current = false; finish(drawn); } }}
-        onPointerCancel={() => { drawing.current = false; setDrawn([]); }}
+        onPointerMove={(e) => {
+          if (activePointer.current !== e.pointerId) return;
+          path.current = [...path.current, toGrid(e)];
+          setDrawn(path.current);
+        }}
+        onPointerUp={(e) => {
+          if (activePointer.current !== e.pointerId) return;
+          activePointer.current = null;
+          finish(path.current);
+        }}
+        onPointerCancel={(e) => {
+          if (activePointer.current !== e.pointerId) return;
+          activePointer.current = null;
+          setDrawn([]);
+        }}
       >
         {step.strokes.map((s, i) => (
           s.length > 1
@@ -85,9 +101,15 @@ export function TraceGame({ items, feedback, reduceMotion, onAnswer, onDone }: G
         ))}
         <circle cx={stroke[0].x} cy={stroke[0].y} r={6} className={`start-dot${showHint && !reduceMotion ? ' pulse' : ''}`} />
         {stroke.length > 1 && <circle cx={stroke[1].x} cy={stroke[1].y} r={2.5} className="next-dot" />}
-        {showHint && stroke.length > 1 && (
+        {showHint && stroke.length === 1 && (
+          <circle cx={stroke[0].x} cy={stroke[0].y} r={10} className="hint-ring" data-testid="hint" />
+        )}
+        {showHint && stroke.length > 1 && reduceMotion && (
+          <path d={toPath(stroke)} className="hint-path" data-testid="hint" />
+        )}
+        {showHint && stroke.length > 1 && !reduceMotion && (
           <circle r={5} className="hint-dot" data-testid="hint">
-            {!reduceMotion && <animateMotion dur="1.6s" repeatCount="indefinite" path={toPath(stroke)} />}
+            <animateMotion dur="1.6s" repeatCount="indefinite" path={toPath(stroke)} />
           </circle>
         )}
         {drawn.length > 1 && <path d={toPath(drawn)} className="stroke-ink" />}

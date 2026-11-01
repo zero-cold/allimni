@@ -1,4 +1,4 @@
-import { render, screen, fireEvent } from '@testing-library/react';
+import { act, render, screen, fireEvent } from '@testing-library/react';
 import { vi } from 'vitest';
 import { clear } from 'idb-keyval';
 import App from '../App';
@@ -20,8 +20,9 @@ const fb = (canSpeak = false): Feedback => ({
   canSpeak: () => canSpeak, hasVoice: () => canSpeak, onVoicesChanged: () => () => {},
 });
 
+let now = 1_000_000;
 beforeEach(async () => { await clear(); resetMemory(); });
-afterEach(() => { for (const k of Object.keys(MEDIA)) delete MEDIA[k]; });
+afterEach(() => { vi.restoreAllMocks(); for (const k of Object.keys(MEDIA)) delete MEDIA[k]; });
 
 async function openMap(p = profile()) {
   await saveState({ version: 1, profiles: [p] });
@@ -31,6 +32,7 @@ async function openMap(p = profile()) {
 }
 
 function playColorStage() {
+  vi.spyOn(Date, 'now').mockImplementation(() => (now += 400));
   fireEvent.click(screen.getByTestId('stage-color-0'));
   for (let i = 0; i < 3; i++) fireEvent.click(screen.getByTestId('learn-next'));
   for (const id of ['red', 'blue', 'yellow']) {
@@ -53,12 +55,10 @@ test('stage flow: learn cards, 2 games, celebration, stars saved', async () => {
   expect(screen.getByTestId('celebration')).toBeTruthy();
   expect((await loadState()).profiles[0].progress.stars).toBe(3);
 });
-test('finish tapped twice awards once', async () => {
+test('leaving celebration keeps stars and opens companion', async () => {
   await openMap();
   playColorStage();
-  const done = screen.getByTestId('celebration-done');
-  fireEvent.click(done);
-  fireEvent.click(done);
+  fireEvent.click(screen.getByTestId('celebration-done'));
   expect((await loadState()).profiles[0].progress.stars).toBe(3);
   expect(await screen.findByTestId('companion')).toBeTruthy();
 });
@@ -133,4 +133,25 @@ test('feeding is free and outfits open by stars', async () => {
 test('reduce motion setting applies to the whole page', async () => {
   await openMap();
   expect(document.documentElement.dataset.reduceMotion).toBe('true');
+});
+test('late voices reveal the listen button', () => {
+  let notify = () => {};
+  let ready = false;
+  const f: Feedback = { ...fb(), canSpeak: () => ready, onVoicesChanged: (fn) => { notify = fn; return () => {}; } };
+  render(<LearnCard item={getItem('ar-1')} mode="partial" sound feedback={f} reduceMotion />);
+  expect(screen.queryByTestId('listen')).toBeNull();
+  ready = true;
+  act(() => notify());
+  expect(screen.getByTestId('listen')).toBeTruthy();
+});
+test('leaving a stage and switching child stop speech', async () => {
+  const cancel = vi.fn();
+  vi.stubGlobal('speechSynthesis', { cancel, speak: vi.fn(), getVoices: () => [], addEventListener() {}, removeEventListener() {} });
+  await openMap();
+  fireEvent.click(screen.getByTestId('stage-color-0'));
+  fireEvent.click(screen.getByTestId('stage-exit'));
+  expect(cancel).toHaveBeenCalledTimes(1);
+  fireEvent.click(await screen.findByTestId('change-child'));
+  expect(cancel).toHaveBeenCalledTimes(2);
+  vi.unstubAllGlobals();
 });
