@@ -159,6 +159,9 @@ main, form.panel { padding: max(14px, env(safe-area-inset-top)) max(16px, env(sa
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after { animation-duration: .01ms !important; animation-iteration-count: 1 !important; }
 }
+:root[data-reduce-motion='true'] *, :root[data-reduce-motion='true'] *::before, :root[data-reduce-motion='true'] *::after {
+  animation-duration: .01ms !important; animation-iteration-count: 1 !important;
+}
 
 .parent { max-width: 720px; margin: 0 auto; display: flex; flex-direction: column; gap: 16px; user-select: text; }
 .parent-head { display: flex; align-items: center; gap: 14px; }

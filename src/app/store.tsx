@@ -53,6 +53,11 @@ export function StoreProvider({ children }: { children: ReactNode }) {
   const settings = active?.settings;
   const feedback = useMemo(() => (settings ? createFeedback(settings) : null), [settings]);
 
+  const reduceMotion = settings?.reduceMotion ?? false;
+  useEffect(() => {
+    document.documentElement.dataset.reduceMotion = String(reduceMotion);
+  }, [reduceMotion]);
+
   if (!state) return null;
 
   const api: AppApi = {

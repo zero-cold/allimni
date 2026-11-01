@@ -130,3 +130,7 @@ test('feeding is free and outfits open by stars', async () => {
   expect(screen.getByTestId('outfit-hat')).toHaveProperty('disabled', false);
   expect(screen.getByTestId('outfit-crown')).toHaveProperty('disabled', true);
 });
+test('reduce motion setting applies to the whole page', async () => {
+  await openMap();
+  expect(document.documentElement.dataset.reduceMotion).toBe('true');
+});
