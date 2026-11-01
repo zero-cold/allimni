@@ -66,7 +66,7 @@ main, form.panel { padding: max(14px, env(safe-area-inset-top)) max(16px, env(sa
 .learn-main { display: flex; align-items: center; justify-content: center; gap: 20px; flex-wrap: wrap; }
 .learn-glyph { display: flex; align-items: baseline; gap: 10px; font-size: clamp(90px, 28vw, 150px); line-height: 1.1; font-weight: 800; color: var(--sea-deep); }
 .learn-glyph small { font-size: .7em; color: var(--ink-soft); }
-.lower { font-size: .7em; color: var(--ink-soft); }
+.lower { font-size: .7em; line-height: 1; color: var(--ink-soft); }
 .learn-card .picture { width: clamp(100px, 30vw, 170px); height: auto; }
 .learn-word { font-size: 38px; font-weight: 800; }
 .learn-aids { display: flex; flex-wrap: wrap; justify-content: center; gap: 12px; }
@@ -176,3 +176,7 @@ main, form.panel { padding: max(14px, env(safe-area-inset-top)) max(16px, env(sa
 .confirm { display: flex; flex-direction: column; gap: 10px; }
 .danger { background: var(--coral); font-weight: 800; }
 .delete-link { align-self: flex-start; background: transparent; box-shadow: none; }
+
+.learn-glyph .glyph { font-size: inherit; line-height: inherit; }
+.prompt-glyph, .prompt .glyph { line-height: 1.5; }
+.trace-pad .stroke-now { stroke-width: 6; stroke-dasharray: .1 9; }
