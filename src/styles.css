@@ -159,3 +159,17 @@ main, form.panel { padding: max(14px, env(safe-area-inset-top)) max(16px, env(sa
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after { animation-duration: .01ms !important; animation-iteration-count: 1 !important; }
 }
+
+.parent { max-width: 720px; margin: 0 auto; display: flex; flex-direction: column; gap: 16px; user-select: text; }
+.parent-head { display: flex; align-items: center; gap: 14px; }
+.parent h1 { font-size: 28px; font-weight: 800; }
+.child-panel { background: var(--surface); border: 3px solid var(--line); border-radius: 20px; padding: 16px; display: flex; flex-direction: column; gap: 12px; }
+.child-panel h2 { display: flex; align-items: center; gap: 10px; font-size: 24px; font-weight: 800; overflow-wrap: anywhere; }
+.child-panel h2 img { width: 44px; height: 44px; }
+.progress-list { list-style: none; margin: 0; padding: 0; display: grid; gap: 4px; }
+.progress-list li { display: flex; justify-content: space-between; gap: 12px; border-bottom: 1px solid #D5DEE4; padding-block: 3px; font-variant-numeric: tabular-nums; }
+.notice { background: var(--sand); border: 3px solid var(--line); border-radius: 14px; padding: 10px 14px; }
+.data-note { color: var(--ink-soft); }
+.confirm { display: flex; flex-direction: column; gap: 10px; }
+.danger { background: var(--coral); font-weight: 800; }
+.delete-link { align-self: flex-start; background: transparent; box-shadow: none; }
