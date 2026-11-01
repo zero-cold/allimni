@@ -12,7 +12,7 @@ const ART = {
   kite: '1fa81', lion: '1f981', moon: '1f315', nose: '1f443', orange: '1f34a', penguin: '1f427',
   queen: '1f478', tree: '1f333', umbrella: '2602', violin: '1f3bb', watermelon: '1f349', yoyo: '1fa80',
   zebra: '1f993', star: '2b50', whale: '1f433', blossom: '1f338', blackcat: '1f408_200d_2b1b',
-  cloud: '2601', owl: '1f989',
+  cloud: '2601', owl: '1f989', glasses: '1f576', cape: '1f9e3', crown: '1f451',
 };
 
 for (const [name, code] of Object.entries(ART)) {

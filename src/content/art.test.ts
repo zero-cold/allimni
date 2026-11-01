@@ -1,5 +1,6 @@
 import { existsSync } from 'node:fs';
 import { ITEMS } from './items';
+import { OUTFITS } from '../progress/progress';
 import { AVATARS, FOODS } from './art';
 
 test('every item art exists', () => {
@@ -7,5 +8,5 @@ test('every item art exists', () => {
   expect(missing).toEqual([]);
 });
 test('avatars, foods and companion art exist', () => {
-  for (const a of [...AVATARS, ...FOODS, 'owl']) expect(existsSync(`public/art/${a}.svg`)).toBe(true);
+  for (const a of [...AVATARS, ...FOODS, 'owl', ...OUTFITS.map((o) => o.id)]) expect(existsSync(`public/art/${a}.svg`)).toBe(true);
 });

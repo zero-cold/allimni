@@ -16,6 +16,7 @@ export interface Profile {
   mode: HearingMode;
   settings: Settings;
   progress: Progress;
+  outfit?: string;
 }
 
 export interface AppState {
