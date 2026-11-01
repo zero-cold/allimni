@@ -26,11 +26,12 @@ const NUM_WORDS = [
   'أحد عشر', 'اثنا عشر', 'ثلاثة عشر', 'أربعة عشر', 'خمسة عشر', 'ستة عشر', 'سبعة عشر',
   'ثمانية عشر', 'تسعة عشر', 'عشرون',
 ];
-const COLORS: [string, string, string, string][] = [
-  ['red', 'أحمر', '#E5383B', '●'], ['blue', 'أزرق', '#2F6FED', '■'], ['yellow', 'أصفر', '#FFD23F', '▲'],
-  ['green', 'أخضر', '#2BA84A', '★'], ['orange', 'برتقالي', '#F77F00', '◆'], ['purple', 'بنفسجي', '#8E44C9', '✚'],
-  ['pink', 'وردي', '#FF8FB8', '♥'], ['brown', 'بني', '#8B5A2B', '⬟'], ['black', 'أسود', '#1F1F24', '⬢'],
-  ['white', 'أبيض', '#FFFFFF', '☾'],
+const COLORS: [string, string, string, string, string][] = [
+  ['red', 'أحمر', '#E5383B', '●', 'apple'], ['blue', 'أزرق', '#2F6FED', '■', 'whale'],
+  ['yellow', 'أصفر', '#FFD23F', '▲', 'banana'], ['green', 'أخضر', '#2BA84A', '★', 'frog'],
+  ['orange', 'برتقالي', '#F77F00', '◆', 'orange'], ['purple', 'بنفسجي', '#8E44C9', '✚', 'grapes'],
+  ['pink', 'وردي', '#FF8FB8', '♥', 'blossom'], ['brown', 'بني', '#8B5A2B', '⬟', 'bear'],
+  ['black', 'أسود', '#1F1F24', '⬢', 'blackcat'], ['white', 'أبيض', '#FFFFFF', '☾', 'cloud'],
 ];
 
 const toArabicDigits = (n: number) =>
@@ -47,7 +48,7 @@ export const ITEMS: Item[] = [
     id: `num-${i + 1}`, island: 'num', display: String(i + 1), altDisplay: toArabicDigits(i + 1),
     word, lang: 'ar', art: 'star', count: i + 1,
   })),
-  ...COLORS.map(([id, word, colorHex, symbol]): Item => ({
-    id, island: 'color', display: symbol, word, lang: 'ar', art: `color-${id}`, colorHex, symbol,
+  ...COLORS.map(([id, word, colorHex, symbol, art]): Item => ({
+    id, island: 'color', display: symbol, word, lang: 'ar', art, colorHex, symbol,
   })),
 ];
