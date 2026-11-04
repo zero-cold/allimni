@@ -7,7 +7,7 @@ export const T = {
   listen: 'اسمع',
   parentPanel: 'صفحة ولي الأمر',
   changeChild: 'غيّر الياهل',
-  companion: 'ربيعك',
+  companion: 'رفيجك',
   toMap: 'الخريطة',
   pearls: (n: number) => `${n} لولو`,
   praise: 'كفو!',
