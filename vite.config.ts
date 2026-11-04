@@ -3,6 +3,8 @@ import react from '@vitejs/plugin-react';
 import { VitePWA } from 'vite-plugin-pwa';
 
 export default defineConfig({
+  // على GitHub Pages ينخدم التطبيق تحت /allimni/.
+  base: process.env.APP_BASE ?? '/',
   plugins: [
     react(),
     VitePWA({
