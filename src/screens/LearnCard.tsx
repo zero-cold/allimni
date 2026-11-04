@@ -1,6 +1,7 @@
 import { useEffect, useState, type ReactNode } from 'react';
 import { artUrl } from '../content/art';
 import { MEDIA } from '../content/media';
+import { T } from '../content/strings';
 import { getStrokes, type Stroke } from '../content/strokes';
 import type { Item } from '../content/types';
 import type { Feedback } from '../feedback/feedback';
@@ -45,7 +46,7 @@ export function LearnCard({ item, mode, sound, feedback, reduceMotion }: Props) 
     <img key="mouth" data-testid="media-mouth" className="media" src={media.mouth} alt="" />
   );
   const speech: ReactNode = canListen && (
-    <button key="listen" type="button" className="listen" data-testid="listen" aria-label="استمع" onClick={listen}>🔊</button>
+    <button key="listen" type="button" className="listen" data-testid="listen" aria-label={T.listen} onClick={listen}>🔊</button>
   );
   const aids = mode === 'visual' ? [sign, mouth, speech] : [speech, mouth, sign];
   const strokes = getStrokes(item);

@@ -1,4 +1,5 @@
 import { useState, type FormEvent } from 'react';
+import { T } from '../content/strings';
 
 const toAscii = (v: string) =>
   v.trim().replace(/[٠-٩]/g, (d) => String(d.charCodeAt(0) - 0x660)).replace(/[۰-۹]/g, (d) => String(d.charCodeAt(0) - 0x6f0));
@@ -25,22 +26,22 @@ export function ParentGate({ onPass, onCancel }: { onPass(): void; onCancel?: ()
 
   return (
     <form className="panel gate" onSubmit={submit}>
-      <h1>لولي الأمر</h1>
-      <p>حل هذه المسألة للمتابعة</p>
+      <h1>{T.gate.title}</h1>
+      <p>{T.gate.hint}</p>
       <p className="gate-question" data-testid="gate-question" dir="ltr">{q.a} × {q.b} = ?</p>
       <input
         id="gate-answer"
         data-testid="gate-answer"
-        aria-label="الإجابة"
+        aria-label={T.gate.answer}
         inputMode="numeric"
         autoComplete="off"
         value={value}
         onChange={(e) => setValue(e.target.value)}
       />
-      {wrong && <p role="alert">الإجابة غير صحيحة، جرّب المسألة الجديدة.</p>}
+      {wrong && <p role="alert">{T.gate.wrong}</p>}
       <div className="row">
-        <button type="submit" className="primary" data-testid="gate-submit">متابعة</button>
-        {onCancel && <button type="button" onClick={onCancel}>رجوع</button>}
+        <button type="submit" className="primary" data-testid="gate-submit">{T.gate.go}</button>
+        {onCancel && <button type="button" onClick={onCancel}>{T.back}</button>}
       </div>
     </form>
   );

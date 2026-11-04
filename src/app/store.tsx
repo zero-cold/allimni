@@ -1,6 +1,7 @@
 import { createContext, useContext, useEffect, useMemo, useRef, useState, type ReactNode } from 'react';
 import type { IslandId } from '../content/types';
 import { createFeedback, type Feedback } from '../feedback/feedback';
+import { withEvents } from './events';
 import { addProfile as addToState, type AppState, type Profile } from '../settings/settings';
 import { lastLoadFailed, loadState, requestPersistence, saveState } from '../storage/storage';
 
@@ -53,7 +54,7 @@ export function StoreProvider({ children }: { children: ReactNode }) {
 
   const active = state?.profiles.find((p) => p.id === activeId) ?? null;
   const settings = active?.settings;
-  const feedback = useMemo(() => (settings ? createFeedback(settings) : null), [settings]);
+  const feedback = useMemo(() => (settings ? withEvents(createFeedback(settings)) : null), [settings]);
 
   const reduceMotion = settings?.reduceMotion ?? false;
   useEffect(() => {

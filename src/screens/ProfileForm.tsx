@@ -1,5 +1,6 @@
 import { useState, type FormEvent } from 'react';
 import { artUrl, AVATARS } from '../content/art';
+import { T } from '../content/strings';
 import { emptyProgress } from '../progress/progress';
 import { defaultSettings, type HearingMode, type Profile } from '../settings/settings';
 
@@ -24,10 +25,10 @@ export function ProfileForm({ initial, onSave, onCancel }: { initial?: Profile; 
 
   return (
     <form className="panel" onSubmit={submit}>
-      <h1>{initial ? 'تعديل الملف' : 'ملف طفل جديد'}</h1>
-      <label htmlFor="profile-name">اسم الطفل</label>
+      <h1>{initial ? T.form.editTitle : T.form.newTitle}</h1>
+      <label htmlFor="profile-name">{T.form.name}</label>
       <input id="profile-name" data-testid="profile-name" maxLength={20} value={name} onChange={(e) => setName(e.target.value)} />
-      <p className="field-label">الصورة</p>
+      <p className="field-label">{T.form.avatar}</p>
       <div className="avatars">
         {AVATARS.map((a) => (
           <button key={a} type="button" aria-label={a} aria-pressed={avatar === a} className={`avatar-pick${avatar === a ? ' selected' : ''}`} onClick={() => setAvatar(a)}>
@@ -37,16 +38,16 @@ export function ProfileForm({ initial, onSave, onCancel }: { initial?: Profile; 
       </div>
       {!initial && (
         <>
-      <p className="field-label">كيف يستفيد الطفل من السمع؟</p>
+      <p className="field-label">{T.form.hearing}</p>
       <div className="row">
-        <button type="button" data-testid="mode-visual" aria-pressed={mode === 'visual'} className={mode === 'visual' ? 'selected' : ''} onClick={() => setMode('visual')}>يعتمد على النظر</button>
-        <button type="button" data-testid="mode-partial" aria-pressed={mode === 'partial'} className={mode === 'partial' ? 'selected' : ''} onClick={() => setMode('partial')}>يسمع جزئياً</button>
+        <button type="button" data-testid="mode-visual" aria-pressed={mode === 'visual'} className={mode === 'visual' ? 'selected' : ''} onClick={() => setMode('visual')}>{T.form.visual}</button>
+        <button type="button" data-testid="mode-partial" aria-pressed={mode === 'partial'} className={mode === 'partial' ? 'selected' : ''} onClick={() => setMode('partial')}>{T.form.partial}</button>
       </div>
         </>
       )}
       <div className="row">
-        <button type="submit" className="primary" data-testid="profile-save" disabled={!name.trim()}>حفظ</button>
-        {onCancel && <button type="button" onClick={onCancel}>رجوع</button>}
+        <button type="submit" className="primary" data-testid="profile-save" disabled={!name.trim()}>{T.form.save}</button>
+        {onCancel && <button type="button" onClick={onCancel}>{T.back}</button>}
       </div>
     </form>
   );

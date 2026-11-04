@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { getItem, mixRoundsFor } from '../content/stages';
+import { T } from '../content/strings';
 import { ItemGlyph } from './ItemFace';
 import type { GameProps } from './types';
 
@@ -78,7 +79,7 @@ export function MixGame({ items, feedback, reduceMotion, onAnswer, onDone }: Gam
         })}
       </div>
       {solved && (
-        <button type="button" className="go-button" data-testid="mix-next" aria-label="التالي" onClick={next}>◀</button>
+        <button type="button" className="go-button" data-testid="mix-next" aria-label={T.next} onClick={next}>◀</button>
       )}
     </div>
   );

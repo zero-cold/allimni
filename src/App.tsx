@@ -4,6 +4,7 @@ import '@fontsource/baloo-bhaijaan-2/latin-500.css';
 import '@fontsource/baloo-bhaijaan-2/latin-800.css';
 import './styles.css';
 import { ErrorBoundary } from './app/ErrorBoundary';
+import { Scenery, Sparkles } from './app/Scenery';
 import { StoreProvider, useApp } from './app/store';
 import { CompanionScreen } from './screens/CompanionScreen';
 import { MapScreen } from './screens/MapScreen';
@@ -23,6 +24,8 @@ function Router() {
 export default function App() {
   return (
     <ErrorBoundary>
+      <Scenery />
+      <Sparkles />
       <StoreProvider>
         <Router />
       </StoreProvider>

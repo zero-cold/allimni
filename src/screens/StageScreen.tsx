@@ -10,6 +10,8 @@ import type { GameProps } from '../games/types';
 import { completeStage, practiceItems, recordCorrect, recordMistakes, type Progress } from '../progress/progress';
 import { Celebration } from './Celebration';
 import { LearnCard } from './LearnCard';
+import { StageBar } from './StageBar';
+import { T } from '../content/strings';
 
 const ROUND_SIZE = 3;
 const MAX_PRACTICE = 2;
@@ -75,15 +77,13 @@ export function StageScreen({ island, index }: { island: IslandId; index: number
   return (
     <main className={`stage island-${island}`} data-testid="stage">
       <header className="stage-bar">
-        <button type="button" className="icon-button" data-testid="stage-exit" aria-label="خروج" onClick={() => navigate({ name: 'map' })}>✕</button>
-        <div className="stage-progress" aria-hidden="true">
-          {Array.from({ length: learnEnd + games.length }, (_, i) => <span key={i} className={i < phase ? 'on' : ''} />)}
-        </div>
+        <button type="button" className="icon-button" data-testid="stage-exit" aria-label={T.exit} onClick={() => navigate({ name: 'map' })}>✕</button>
+        <StageBar step={phase} total={learnEnd + games.length} />
       </header>
       {inLearn && (
         <div className="learn-step">
           <LearnCard key={newItems[phase].id} item={newItems[phase]} mode={profile.mode} sound={settings.sound} feedback={fb} reduceMotion={settings.reduceMotion} />
-          <button type="button" className="go-button" data-testid="learn-next" aria-label="التالي" onClick={() => setPhase(phase + 1)}>◀</button>
+          <button type="button" className="go-button" data-testid="learn-next" aria-label={T.next} onClick={() => setPhase(phase + 1)}>◀</button>
         </div>
       )}
       {Game && (

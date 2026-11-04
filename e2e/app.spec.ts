@@ -149,5 +149,7 @@ test.describe('with motion on', () => {
       await page.waitForTimeout(350);
     }
     await expect(page.getByTestId('celebration')).toBeVisible();
+    await page.waitForTimeout(1500);
+    expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
   });
 });

@@ -97,7 +97,7 @@ test('deleting last profile returns to first run', async () => {
 });
 test('warns when arabic voice missing', async () => {
   await openParent();
-  expect(screen.getByTestId('voice-warning').textContent).toContain('العربية');
+  expect(screen.getByTestId('voice-warning').textContent).toContain('العربي');
 });
 test('warns when saving failed', async () => {
   await openParent();
@@ -107,7 +107,7 @@ test('warns when saving failed', async () => {
 });
 test('explains data stays on this device', async () => {
   await openParent();
-  expect(screen.getByTestId('data-note').textContent).toContain('هذا الجهاز');
+  expect(screen.getByTestId('data-note').textContent).toContain('هالجهاز');
 });
 
 test('editing keeps progress', async () => {

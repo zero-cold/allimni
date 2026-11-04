@@ -61,7 +61,7 @@ export function BalloonGame({ items, feedback, reduceMotion, onAnswer, onDone }:
         <img src={artUrl(target.art)} alt="" />
         <ItemGlyph item={target} />
         <span className="score" data-testid="score" aria-label={`${score} / ${GOAL}`}>
-          {'★'.repeat(score)}<span className="score-rest">{'★'.repeat(GOAL - score)}</span>
+          {Array.from({ length: GOAL }, (_, i) => <span key={i} className={`pearl${i < score ? '' : ' dim'}`} />)}
           <span hidden>{score}</span>
         </span>
       </div>
