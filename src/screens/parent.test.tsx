@@ -135,3 +135,15 @@ test('warns when stored data could not be read', async () => {
   render(<App />);
   expect(await screen.findByTestId('load-warning')).toBeTruthy();
 });
+
+test('shows when the app is ready to work offline', async () => {
+  Object.defineProperty(navigator, 'serviceWorker', { value: { controller: {} }, configurable: true });
+  await openParent();
+  expect(screen.getByTestId('offline-status').textContent).toContain('جاهز');
+  expect(screen.getByTestId('offline-status').textContent).not.toContain('مو جاهز');
+  Reflect.deleteProperty(navigator, 'serviceWorker');
+});
+test('shows when the app is not yet ready offline', async () => {
+  await openParent();
+  expect(screen.getByTestId('offline-status').textContent).toContain('مو جاهز');
+});

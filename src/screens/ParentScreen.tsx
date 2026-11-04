@@ -119,6 +119,9 @@ export function ParentScreen() {
       {adding
         ? <ProfileForm onCancel={() => setAdding(false)} onSave={(p) => { addProfile(p); setAdding(false); }} />
         : state.profiles.length < MAX_PROFILES && <button type="button" data-testid="parent-add" onClick={() => setAdding(true)}>{T.addChild}</button>}
+      <p className="notice" data-testid="offline-status">
+        {typeof navigator !== 'undefined' && navigator.serviceWorker?.controller ? T.parent.offlineReady : T.parent.offlineNotReady}
+      </p>
       <p className="data-note" data-testid="data-note">{T.parent.dataNote}</p>
     </main>
   );
