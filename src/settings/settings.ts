@@ -22,6 +22,8 @@ export interface Profile {
 export interface AppState {
   version: 1;
   profiles: Profile[];
+  // صور العيلة لبطاقات «كلّمني»، مشتركة بين كل ملفات الجهاز.
+  photos?: Record<string, string>;
 }
 
 export const MAX_PROFILES = 6;

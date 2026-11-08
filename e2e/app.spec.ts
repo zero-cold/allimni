@@ -119,6 +119,16 @@ for (const size of [{ width: 375, height: 812 }, { width: 768, height: 1024 }]) 
     await page.getByTestId('stage-exit').click();
     await page.getByTestId('open-companion').click();
     await check();
+    await page.getByTestId('companion-back').click();
+    await page.getByTestId('open-talk').click();
+    await check();
+    await page.getByTestId('talk-card-talk-water').click();
+    await check();
+    await page.getByTestId('talk-close').click();
+    await page.getByTestId('talk-back').click();
+    await page.getByTestId('open-stories').click();
+    await page.getByTestId('story-owl-sea').click();
+    await check();
   });
 }
 

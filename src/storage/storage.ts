@@ -1,5 +1,6 @@
 import { get, set } from 'idb-keyval';
 import { ITEMS } from '../content/items';
+import { ISLAND_IDS, type IslandId } from '../content/types';
 import { emptyProgress, type Progress } from '../progress/progress';
 import { defaultSettings, type AppState, type Profile } from '../settings/settings';
 
@@ -32,7 +33,7 @@ function repairProgress(raw: Partial<Progress> | undefined): Progress {
     ...base,
     stars: typeof raw?.stars === 'number' ? raw.stars : 0,
     lastRunId: raw?.lastRunId,
-    completed: { ar: list(done.ar), en: list(done.en), num: list(done.num), color: list(done.color) },
+    completed: Object.fromEntries(ISLAND_IDS.map((id) => [id, list(done[id])])) as Record<IslandId, number[]>,
     practice: Object.fromEntries(practice),
   };
 }
@@ -50,7 +51,10 @@ function repair(state: AppState): AppState {
         progress: repairProgress(p.progress),
       };
     });
-  return { version: 1, profiles };
+  const photos = Object.fromEntries(
+    Object.entries((state.photos ?? {}) as Record<string, unknown>).filter(([, v]) => typeof v === 'string'),
+  ) as Record<string, string>;
+  return { version: 1, profiles, photos };
 }
 
 export function resetMemory(): void {

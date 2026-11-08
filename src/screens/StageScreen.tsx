@@ -5,6 +5,9 @@ import type { GameId, IslandId, Item } from '../content/types';
 import { BalloonGame } from '../games/BalloonGame';
 import { MatchGame } from '../games/MatchGame';
 import { MixGame } from '../games/MixGame';
+import { SayGame } from '../games/SayGame';
+import { WordGame } from '../games/WordGame';
+import type { Profile } from '../settings/settings';
 import { TraceGame } from '../games/TraceGame';
 import type { GameProps } from '../games/types';
 import { completeStage, practiceItems, recordCorrect, recordMistakes, type Progress } from '../progress/progress';
@@ -18,8 +21,14 @@ const MAX_PRACTICE = 2;
 const FIRST_STARS = 3;
 
 const GAMES: Record<GameId, (p: GameProps) => React.JSX.Element> = {
-  trace: TraceGame, match: MatchGame, balloon: BalloonGame, mix: MixGame,
+  trace: TraceGame, match: MatchGame, balloon: BalloonGame, mix: MixGame, word: WordGame, say: SayGame,
 };
+
+// الأطفال اللي يسمعون شوي يتدربون على النطق في آخر كل مرحلة.
+export function gamesFor(profile: Profile, island: IslandId, index: number): GameId[] {
+  const games: GameId[] = [...gamesForStage(island, index)];
+  return profile.mode === 'partial' ? [...games, 'say'] : games;
+}
 
 export function buildRound(p: Progress, island: IslandId, index: number): Item[] {
   const round = fillRound(island, index, ROUND_SIZE);
@@ -38,7 +47,7 @@ export function StageScreen({ island, index }: { island: IslandId; index: number
   const { settings } = profile;
   const [newItems] = useState(() => getStages(island)[index].itemIds.map(getItem));
   const [round] = useState(() => buildRound(profile.progress, island, index));
-  const [games] = useState(() => gamesForStage(island, index));
+  const [games] = useState(() => gamesFor(profile, island, index));
   const [runId] = useState(() => `${Date.now()}-${Math.random()}`);
   const [wasDone] = useState(() => profile.progress.completed[island].includes(index));
   const [phase, setPhase] = useState(0);

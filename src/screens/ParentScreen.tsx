@@ -7,6 +7,7 @@ import { createFeedback } from '../feedback/feedback';
 import { defaultSettings, type HearingMode, type Profile, type Settings } from '../settings/settings';
 import { MAX_PROFILES } from '../settings/settings';
 import { T } from '../content/strings';
+import { TALK } from '../content/talk';
 import { ParentGate } from './ParentGate';
 import { ProfileForm, prefersReducedMotion } from './ProfileForm';
 
@@ -87,6 +88,61 @@ function ChildPanel({ profile }: { profile: Profile }) {
   );
 }
 
+// تصغير الصورة قبل حفظها حتى ما تكبر مساحة التخزين. إذا تعذر التصغير تنحفظ مثل ما هي.
+async function toSmallDataUrl(file: File, max = 480): Promise<string> {
+  const raw = await new Promise<string>((resolve, reject) => {
+    const reader = new FileReader();
+    reader.onload = () => resolve(String(reader.result));
+    reader.onerror = () => reject(reader.error);
+    reader.readAsDataURL(file);
+  });
+  try {
+    const bitmap = await createImageBitmap(file);
+    const scale = Math.min(1, max / Math.max(bitmap.width, bitmap.height));
+    const canvas = document.createElement('canvas');
+    canvas.width = Math.round(bitmap.width * scale);
+    canvas.height = Math.round(bitmap.height * scale);
+    canvas.getContext('2d')!.drawImage(bitmap, 0, 0, canvas.width, canvas.height);
+    return canvas.toDataURL('image/jpeg', 0.82);
+  } catch {
+    return raw;
+  }
+}
+
+function FamilyPhotos() {
+  const { state, setPhoto } = useApp();
+  const photos = state.photos ?? {};
+  return (
+    <section className="child-panel">
+      <h2>{T.photos.title}</h2>
+      <p>{T.photos.hint}</p>
+      <div className="photo-grid">
+        {TALK.filter((c) => c.section === 'family').map((c) => (
+          <div key={c.id} className="photo-cell">
+            <img className={photos[c.id] ? 'photo' : ''} src={photos[c.id] ?? artUrl(c.art)} alt="" />
+            <span>{c.word}</span>
+            <label className="photo-pick">
+              📷 {T.photos.take}
+              <input
+                type="file"
+                accept="image/*"
+                data-testid={`photo-${c.id}`}
+                onChange={async (e) => {
+                  const file = e.target.files?.[0];
+                  if (file) setPhoto(c.id, await toSmallDataUrl(file));
+                }}
+              />
+            </label>
+            {photos[c.id] && (
+              <button type="button" className="delete-link" onClick={() => setPhoto(c.id, null)}>{T.photos.remove}</button>
+            )}
+          </div>
+        ))}
+      </div>
+    </section>
+  );
+}
+
 export function ParentScreen() {
   const { state, active, saveFailed, loadFailed, addProfile, navigate } = useApp();
   const [adding, setAdding] = useState(false);
@@ -122,6 +178,7 @@ export function ParentScreen() {
       <p className="notice" data-testid="offline-status">
         {typeof navigator !== 'undefined' && navigator.serviceWorker?.controller ? T.parent.offlineReady : T.parent.offlineNotReady}
       </p>
+      <FamilyPhotos />
       <p className="data-note" data-testid="data-note">{T.parent.dataNote}</p>
     </main>
   );

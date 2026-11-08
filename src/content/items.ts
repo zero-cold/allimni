@@ -1,4 +1,4 @@
-import type { Item } from './types';
+import type { Item, ShapeKind } from './types';
 
 const AR: [string, string, string][] = [
   ['أ', 'أرنب', 'rabbit'], ['ب', 'بطة', 'duck'], ['ت', 'تفاحة', 'apple'], ['ث', 'ثعلب', 'fox'],
@@ -36,6 +36,27 @@ const COLORS: [string, string, string, string, string][] = [
 const toArabicDigits = (n: number) =>
   String(n).replace(/\d/g, (d) => '٠١٢٣٤٥٦٧٨٩'[Number(d)]);
 
+const SHAPES: [ShapeKind, string, string][] = [
+  ['circle', 'دايرة', 'ball'], ['square', 'مربع', 'gift'], ['triangle', 'مثلث', 'pizza'], ['star', 'نجمة', 'star'],
+  ['heart', 'قلب', 'heart'], ['rectangle', 'مستطيل', 'door'], ['crescent', 'هلال', 'crescent'], ['oval', 'بيضاوي', 'egg'],
+];
+const ANIMALS: [string, string][] = [
+  ['قطوة', 'cat'], ['كلب', 'dog'], ['حصان', 'horse'], ['جمل', 'camel'], ['خروف', 'sheep'], ['دياية', 'chicken'],
+  ['سمكة', 'fish'], ['عصفور', 'bird'], ['أرنب', 'rabbit'], ['أسد', 'lion'], ['فيل', 'elephant'], ['سلحفاة', 'turtle'],
+];
+const FOOD: [string, string][] = [
+  ['مجبوس', 'majboos'], ['هريس', 'harees'], ['جريش', 'jareesh'], ['لقيمات', 'luqaimat'], ['بلاليط', 'balaleet'],
+  ['تمر', 'dates'], ['خبز', 'bread'], ['حليب', 'milk'], ['ماي', 'water'], ['عصير', 'juice'],
+];
+const PLACES: [string, string][] = [
+  ['البيت', 'house'], ['المدرسة', 'school'], ['المسجد', 'mosque'], ['الحديقة', 'park'], ['المستشفى', 'hospital'],
+  ['الجمعية', 'cart'], ['البحر', 'beach'], ['البر', 'camping'], ['أبراج الكويت', 'kuwaittowers'],
+  ['سوق المباركية', 'mubarakiya'], ['الديوانية', 'diwaniya'],
+];
+
+const wordItems = (island: Item['island'], list: [string, string][]) =>
+  list.map(([word, art], i): Item => ({ id: `${island}-${i + 1}`, island, display: word, word, lang: 'ar', art }));
+
 export const ITEMS: Item[] = [
   ...AR.map(([display, word, art], i): Item => ({
     id: `ar-${i + 1}`, island: 'ar', display, word, lang: 'ar', art,
@@ -50,4 +71,10 @@ export const ITEMS: Item[] = [
   ...COLORS.map(([id, word, colorHex, symbol, art]): Item => ({
     id, island: 'color', display: symbol, word, lang: 'ar', art, colorHex, symbol,
   })),
+  ...SHAPES.map(([shape, word, art], i): Item => ({
+    id: `shape-${i + 1}`, island: 'shape', display: word, word, lang: 'ar', art, shape,
+  })),
+  ...wordItems('animal', ANIMALS),
+  ...wordItems('food', FOOD),
+  ...wordItems('place', PLACES),
 ];

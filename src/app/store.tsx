@@ -10,7 +10,9 @@ export type Screen =
   | { name: 'map' }
   | { name: 'stage'; island: IslandId; index: number }
   | { name: 'companion' }
-  | { name: 'parent' };
+  | { name: 'parent' }
+  | { name: 'talk' }
+  | { name: 'stories' };
 
 interface AppApi {
   state: AppState;
@@ -23,6 +25,7 @@ interface AppApi {
   updateProfile(id: string, fn: (p: Profile) => Profile): void;
   addProfile(p: Profile): void;
   removeProfile(id: string): void;
+  setPhoto(cardId: string, url: string | null): void;
   navigate(s: Screen): void;
 }
 
@@ -84,6 +87,12 @@ export function StoreProvider({ children }: { children: ReactNode }) {
       const first = current.current!.profiles.length === 0;
       commit(addToState(current.current!, p));
       if (first) void requestPersistence();
+    },
+    setPhoto(cardId, url) {
+      const s = current.current!;
+      const photos = { ...s.photos };
+      if (url) photos[cardId] = url; else delete photos[cardId];
+      commit({ ...s, photos });
     },
     removeProfile(id) {
       const s = current.current!;

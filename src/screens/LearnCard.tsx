@@ -1,9 +1,11 @@
 import { useEffect, useState, type ReactNode } from 'react';
 import { artUrl } from '../content/art';
 import { MEDIA } from '../content/media';
+import { recordingFor } from '../content/recordings';
+import { playClips } from '../app/audio';
 import { T } from '../content/strings';
 import { getStrokes, type Stroke } from '../content/strokes';
-import type { Item } from '../content/types';
+import { WORD_ISLANDS, type Item } from '../content/types';
 import type { Feedback } from '../feedback/feedback';
 import { ItemGlyph, ItemPicture } from '../games/ItemFace';
 import type { HearingMode } from '../settings/settings';
@@ -33,9 +35,11 @@ export function LearnCard({ item, mode, sound, feedback, reduceMotion }: Props) 
   useEffect(() => feedback.onVoicesChanged(() => refresh((n) => n + 1)), [feedback]);
 
   const media = MEDIA[item.id] ?? {};
-  const canListen = sound && (Boolean(media.audio) || feedback.canSpeak(item.lang));
+  // الحروف تنقال باسمها ثم كلمتها، والباقي بكلمته.
+  const clips = [media.audio, recordingFor(`${item.id}:name`), recordingFor(item.id)].filter((c): c is string => Boolean(c));
+  const canListen = sound && (clips.length > 0 || feedback.canSpeak(item.lang));
   const listen = () => {
-    if (media.audio) void new Audio(media.audio).play();
+    if (clips.length) playClips(clips);
     else feedback.speak(item.word, item.lang);
   };
 
@@ -54,10 +58,12 @@ export function LearnCard({ item, mode, sound, feedback, reduceMotion }: Props) 
   return (
     <div className="learn-card" data-testid="learn-card" data-item={item.id}>
       <div className="learn-main">
-        <div className="learn-glyph">
-          <ItemGlyph item={item} />
-          {item.island === 'en' && <span className="lower" dir="ltr">{item.altDisplay}</span>}
-        </div>
+        {!WORD_ISLANDS.includes(item.island) && (
+          <div className="learn-glyph">
+            <ItemGlyph item={item} />
+            {item.island === 'en' && <span className="lower" dir="ltr">{item.altDisplay}</span>}
+          </div>
+        )}
         <ItemPicture item={item} />
       </div>
       <p className="learn-word" data-testid="learn-word" dir={item.lang === 'en' ? 'ltr' : 'rtl'}>{item.word}</p>

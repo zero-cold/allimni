@@ -1,5 +1,5 @@
 import { getItem } from '../content/stages';
-import type { IslandId } from '../content/types';
+import { ISLAND_IDS, type IslandId } from '../content/types';
 
 export interface Progress {
   stars: number;
@@ -22,7 +22,8 @@ const PRACTICE_AFTER_MISTAKES = 2;
 const CLEAR_AFTER_CORRECT = 2;
 
 export function emptyProgress(): Progress {
-  return { stars: 0, completed: { ar: [], en: [], num: [], color: [] }, practice: {} };
+  const completed = Object.fromEntries(ISLAND_IDS.map((id) => [id, [] as number[]])) as Record<IslandId, number[]>;
+  return { stars: 0, completed, practice: {} };
 }
 
 export function isStageUnlocked(p: Progress, island: IslandId, index: number): boolean {

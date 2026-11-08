@@ -3,15 +3,11 @@ import { PearlCount } from '../app/Pearls';
 import { artUrl } from '../content/art';
 import { getStages } from '../content/stages';
 import { T } from '../content/strings';
-import type { IslandId } from '../content/types';
+import { ISLAND_IDS } from '../content/types';
+import { ISLAND_LOOK } from '../content/islands';
 import { isStageUnlocked } from '../progress/progress';
 
-const ISLANDS: { id: IslandId; badge: string; art: string }[] = [
-  { id: 'ar', badge: 'أ', art: 'camel' },
-  { id: 'en', badge: 'A', art: 'lion' },
-  { id: 'num', badge: '١', art: 'crab' },
-  { id: 'color', badge: '🎨', art: 'tropicalfish' },
-];
+const ISLANDS = ISLAND_IDS.map((id) => ({ id, ...ISLAND_LOOK[id] }));
 
 const ROW = 96;
 const WIDTH = 300;
@@ -32,6 +28,12 @@ export function MapScreen() {
         </button>
         <span className="child-name">{name}</span>
         <PearlCount n={progress.stars} testId="stars" />
+        <button type="button" className="icon-button" aria-label={T.talk.title} data-testid="open-talk" onClick={() => navigate({ name: 'talk' })}>
+          <img src={artUrl('speech')} alt="" />
+        </button>
+        <button type="button" className="icon-button" aria-label={T.stories.title} data-testid="open-stories" onClick={() => navigate({ name: 'stories' })}>
+          <img src={artUrl('book')} alt="" />
+        </button>
         <button type="button" className="icon-button" aria-label={T.companion} data-testid="open-companion" onClick={() => navigate({ name: 'companion' })}>
           <img src={artUrl('owl')} alt="" />
         </button>

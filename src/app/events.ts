@@ -1,4 +1,5 @@
 import type { Feedback } from '../feedback/feedback';
+import { stopAudio } from './audio';
 
 export type FeedbackKind = 'correct' | 'wrong' | 'celebrate';
 export const FEEDBACK_EVENT = 'allimni-feedback';
@@ -11,6 +12,7 @@ export function withEvents(f: Feedback): Feedback {
     correct() { f.correct(); emit('correct'); },
     wrong() { f.wrong(); emit('wrong'); },
     celebrate() { f.celebrate(); emit('celebrate'); },
+    stop() { f.stop(); stopAudio(); },
   };
 }
 
